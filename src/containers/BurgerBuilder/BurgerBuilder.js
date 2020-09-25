@@ -86,7 +86,7 @@ const BurgerBuilder = (props) => {
               onContinueClicked={ordered}
             />
           </Modal>
-          <Backdrop onBackdropClicked={hideModal} />
+          <Backdrop onBackdropClicked={hideModal} show={displayModal} />
         </Fragment>
       ) : null}
       <Burger ingredients={ingredients} />
