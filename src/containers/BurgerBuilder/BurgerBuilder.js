@@ -1,9 +1,9 @@
 import React, { Fragment, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
-import Backdrop from '../../components/UI/Backdrop/Backdrop';
 import OrderSummery from '../../components/Burger/OrderSummery/OrderSummery';
 
 const prices = {
@@ -14,6 +14,8 @@ const prices = {
 };
 
 const BurgerBuilder = (props) => {
+  // Setting history
+  const history = useHistory();
   // State
   const [ingredients, setIngredients] = useState({
     meat: 0,
@@ -70,25 +72,34 @@ const BurgerBuilder = (props) => {
     setDisplayModal(false);
   };
 
-  const ordered = () => {
-    alert('WOHOO');
+  const continueToCheckout = () => {
+    const queryArr = [];
+    for (let ing in ingredients) {
+      const ingredientString = `${encodeURI(ing)}=${encodeURI(
+        ingredients[ing]
+      )}`;
+      queryArr.push(ingredientString);
+    }
+    queryArr.push('price=' + price);
+
+    const queryStr = queryArr.join('&');
+
+    history.push({
+      pathname: '/checkout',
+      search: '?' + queryStr,
+    });
   };
 
   return (
     <Fragment>
-      {displayModal ? (
-        <Fragment>
-          <Modal>
-            <OrderSummery
-              ingredients={ingredients}
-              price={price}
-              onCancelClicked={hideModal}
-              onContinueClicked={ordered}
-            />
-          </Modal>
-          <Backdrop onBackdropClicked={hideModal} show={displayModal} />
-        </Fragment>
-      ) : null}
+      <Modal show={displayModal} onClick={hideModal}>
+        <OrderSummery
+          ingredients={ingredients}
+          price={price}
+          onCancelClicked={hideModal}
+          onContinueClicked={continueToCheckout}
+        />
+      </Modal>
       <Burger ingredients={ingredients} />
       <BuildControls
         price={price}
