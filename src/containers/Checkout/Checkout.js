@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import React, { Fragment, useState, useEffect } from 'react';
+import { Route, useLocation, useHistory } from 'react-router-dom';
 
-import CheckoutSummery from '../../components/CheckoutSummery/CheckoutSummery';
+import CheckoutSummary from '../../components/CheckoutSummary/CheckoutSummary';
+import ContactData from './ContactData/ContactData';
 
 const Checkout = (props) => {
   const history = useHistory();
@@ -23,10 +24,11 @@ const Checkout = (props) => {
       cheese,
       salad,
     });
-  }, [meat, bacon, cheese, salad]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onContinueClicked = () => {
-    history.push('/chechout-summery');
+  const onContinueClicked = (e) => {
+    e.preventDefault();
+    history.push(history.location.pathname + '/chechout-summary');
   };
 
   const onCencelClicked = () => {
@@ -34,12 +36,17 @@ const Checkout = (props) => {
   };
 
   return (
-    <CheckoutSummery
-      ingredients={ingredients}
-      onContinueClicked={onContinueClicked}
-      onCencelClicked={onCencelClicked}
-      price={price}
-    />
+    <Fragment>
+      <CheckoutSummary
+        ingredients={ingredients}
+        onContinueClicked={onContinueClicked}
+        onCencelClicked={onCencelClicked}
+        price={price}
+      />
+      <Route path="/checkout/chechout-summary">
+        <ContactData />
+      </Route>
+    </Fragment>
   );
 };
 

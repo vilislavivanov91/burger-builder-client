@@ -3,9 +3,9 @@ import React from 'react';
 import Burger from '../Burger/Burger';
 import Button from '../UI/Button/Button';
 import Spinner from '../UI/Spinner/Spinner';
-import './CheckoutSummery.css';
+import './CheckoutSummary.css';
 
-const checkoutSummery = (props) => {
+const checkoutSummary = (props) => {
   let burger = <Spinner />;
 
   if (props.ingredients) {
@@ -13,7 +13,7 @@ const checkoutSummery = (props) => {
   }
 
   return (
-    <div>
+    <div className="CheckoutSummary">
       {burger}
       <h4>Hope you like your burger</h4>
       <p>
@@ -29,4 +29,4 @@ const checkoutSummery = (props) => {
   );
 };
 
-export default checkoutSummery;
+export default checkoutSummary;
