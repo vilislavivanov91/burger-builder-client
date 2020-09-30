@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Button from '../../../components/UI/Button/Button';
 import Input from '../../../components/UI/Input/Input';
+import axios from '../../../axios';
 import './ContactData.css';
 
 const ContactData = (props) => {
+  const history = useHistory();
   const [contactData, setContactData] = useState({
     name: {
       inputType: 'input',
@@ -96,6 +99,8 @@ const ContactData = (props) => {
     },
   });
 
+  const [formValidity, setformValidity] = useState(false);
+
   const inputChange = (e, inputName) => {
     const inputValue = e.target.value;
 
@@ -129,13 +134,46 @@ const ContactData = (props) => {
 
     updatedContactData[inputName] = updatedContactElement;
 
+    const isvalid = checkFormValidation(updatedContactData);
+
     setContactData(updatedContactData);
+    setformValidity(isvalid);
+  };
+
+  const checkFormValidation = (data) => {
+    let isValid = true;
+    for (const key in data) {
+      isValid = isValid ? data[key].validation.valid : false;
+    }
+    return isValid;
   };
 
   const contactDataArray = [];
   for (const key in contactData) {
     contactDataArray.push({ id: key, config: contactData[key] });
   }
+
+  const onOrderClicked = (e) => {
+    e.preventDefault();
+    const orderData = {
+      ...props.ingredients,
+      price: props.price,
+      name: contactData.name.value,
+      email: contactData.email.value,
+      address: contactData.address.value,
+      postalCode: contactData.postalCode.value,
+      deliveryMethod: contactData.deliveryMethod.value,
+    };
+
+    console.log(props.price);
+
+    axios
+      .post('/order', orderData)
+      .then((response) => {
+        history.push('/orders');
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div className="ContactData">
@@ -158,7 +196,13 @@ const ContactData = (props) => {
             />
           );
         })}
-        <Button type="Success">ORDER</Button>
+        <Button
+          type="Success"
+          onClick={onOrderClicked}
+          disabled={!formValidity}
+        >
+          ORDER
+        </Button>
       </form>
     </div>
   );

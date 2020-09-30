@@ -6,6 +6,7 @@ import './App.css';
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
+import Orders from './containers/Orders/Orders';
 
 function App() {
   return (
@@ -14,8 +15,11 @@ function App() {
         <Route path="/checkout">
           <Checkout />
         </Route>
+        <Route path="/orders">
+          <Orders />
+        </Route>
         <Route path="/" render={BurgerBuilder}>
-          <BurgerBuilder text="1" />
+          <BurgerBuilder />
         </Route>
       </Switch>
     </Layout>

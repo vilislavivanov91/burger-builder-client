@@ -16,6 +16,7 @@ const Checkout = (props) => {
 
   // State
   const [ingredients, setIngredients] = useState(null);
+  const [burgerPrice, setBurgerPrice] = useState(null);
 
   useEffect(() => {
     setIngredients({
@@ -24,6 +25,8 @@ const Checkout = (props) => {
       cheese,
       salad,
     });
+
+    setBurgerPrice(price);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onContinueClicked = (e) => {
@@ -35,19 +38,19 @@ const Checkout = (props) => {
     history.goBack();
   };
 
-  return (
+  return burgerPrice && ingredients ? (
     <Fragment>
       <CheckoutSummary
         ingredients={ingredients}
         onContinueClicked={onContinueClicked}
         onCencelClicked={onCencelClicked}
-        price={price}
+        price={burgerPrice}
       />
       <Route path="/checkout/chechout-summary">
-        <ContactData />
+        <ContactData ingredients={ingredients} price={burgerPrice} />
       </Route>
     </Fragment>
-  );
+  ) : null;
 };
 
 export default Checkout;
