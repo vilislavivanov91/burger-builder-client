@@ -1,34 +1,12 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { Route, useLocation, useHistory } from 'react-router-dom';
+import React, { Fragment } from 'react';
+import { Route, useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import CheckoutSummary from '../../components/CheckoutSummary/CheckoutSummary';
 import ContactData from './ContactData/ContactData';
 
 const Checkout = (props) => {
   const history = useHistory();
-
-  const query = new URLSearchParams(useLocation().search);
-  const meat = +query.get('meat');
-  const bacon = +query.get('bacon');
-  const cheese = +query.get('cheese');
-  const salad = +query.get('salad');
-  const price = +query.get('price');
-
-  // State
-  const [ingredients, setIngredients] = useState(null);
-  const [burgerPrice, setBurgerPrice] = useState(null);
-
-  useEffect(() => {
-    setIngredients({
-      meat,
-      bacon,
-      cheese,
-      salad,
-    });
-
-    setBurgerPrice(price);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const onContinueClicked = (e) => {
     e.preventDefault();
     history.push(history.location.pathname + '/chechout-summary');
@@ -38,19 +16,26 @@ const Checkout = (props) => {
     history.goBack();
   };
 
-  return burgerPrice && ingredients ? (
+  return props.price && props.ingredients ? (
     <Fragment>
       <CheckoutSummary
-        ingredients={ingredients}
+        ingredients={props.ingredients}
         onContinueClicked={onContinueClicked}
         onCencelClicked={onCencelClicked}
-        price={burgerPrice}
+        price={props.price}
       />
       <Route path="/checkout/chechout-summary">
-        <ContactData ingredients={ingredients} price={burgerPrice} />
+        <ContactData ingredients={props.ingredients} price={props.price} />
       </Route>
     </Fragment>
   ) : null;
 };
 
-export default Checkout;
+const mapStateToProps = (state) => {
+  return {
+    ingredients: state.ingredients,
+    price: state.price,
+  };
+};
+
+export default connect(mapStateToProps)(Checkout);

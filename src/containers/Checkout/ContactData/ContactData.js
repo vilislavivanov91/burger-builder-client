@@ -165,8 +165,6 @@ const ContactData = (props) => {
       deliveryMethod: contactData.deliveryMethod.value,
     };
 
-    console.log(props.price);
-
     axios
       .post('/order', orderData)
       .then((response) => {

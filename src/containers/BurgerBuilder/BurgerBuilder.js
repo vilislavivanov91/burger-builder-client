@@ -1,69 +1,25 @@
 import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummery from '../../components/Burger/OrderSummery/OrderSummery';
-
-const prices = {
-  meat: 0.6,
-  cheese: 0.4,
-  salad: 0.3,
-  bacon: 0.5,
-};
+import {
+  addIngredient,
+  removeIngredient,
+} from '../../actions/burgerActionCreator';
 
 const BurgerBuilder = (props) => {
   // Setting history
   const history = useHistory();
   // State
-  const [ingredients, setIngredients] = useState({
-    meat: 0,
-    cheese: 0,
-    salad: 0,
-    bacon: 0,
-  });
-  const [price, setPrice] = useState(0.7);
   const [displayModal, setDisplayModal] = useState(false);
 
-  // Handleling functions
-  const addIngredients = (type) => {
-    const newIngredients = {
-      ...ingredients,
-      [type]: ingredients[type] + 1,
-    };
-    const newPrice = price + prices[type];
-
-    setIngredients(newIngredients);
-    setPrice(newPrice);
-  };
-
-  const removeIngredients = (type) => {
-    const newIngredients = {
-      ...ingredients,
-      [type]: ingredients[type] > 0 ? ingredients[type] - 1 : 0,
-    };
-    const newPrice = ingredients[type] > 0 ? price - prices[type] : 0;
-
-    setIngredients(newIngredients);
-    setPrice(newPrice);
-  };
-
   const ingredientAvailability = (ingredient) => {
-    return ingredients[ingredient] > 0;
+    return props.ingredients[ingredient] > 0;
   };
-
-  const disableOrderButton = () => {
-    const ingredientsCount = Object.values(ingredients).reduce(
-      (prevValue, value) => {
-        return prevValue + value;
-      },
-      0
-    );
-
-    return ingredientsCount === 0;
-  };
-
   const handleDisplayModal = () => {
     setDisplayModal(true);
   };
@@ -74,13 +30,13 @@ const BurgerBuilder = (props) => {
 
   const continueToCheckout = () => {
     const queryArr = [];
-    for (let ing in ingredients) {
+    for (let ing in props.ingredients) {
       const ingredientString = `${encodeURI(ing)}=${encodeURI(
-        ingredients[ing]
+        props.ingredients[ing]
       )}`;
       queryArr.push(ingredientString);
     }
-    queryArr.push('price=' + price);
+    queryArr.push('price=' + props.price);
 
     const queryStr = queryArr.join('&');
 
@@ -94,23 +50,37 @@ const BurgerBuilder = (props) => {
     <Fragment>
       <Modal show={displayModal} onClick={hideModal}>
         <OrderSummery
-          ingredients={ingredients}
-          price={price}
+          ingredients={props.ingredients}
+          price={props.price}
           onCancelClicked={hideModal}
           onContinueClicked={continueToCheckout}
         />
       </Modal>
-      <Burger ingredients={ingredients} />
+      <Burger ingredients={props.ingredients} />
       <BuildControls
-        price={price}
-        addIngredients={addIngredients}
-        removeIngredients={removeIngredients}
+        price={props.price}
+        addIngredients={props.addIngredient}
+        removeIngredients={props.removeIngredient}
         ingredientAvailability={ingredientAvailability}
-        disableOrderButton={disableOrderButton()}
+        disableOrderButton={props.ingredientsAvailability}
         onOrderClicked={handleDisplayModal}
       />
     </Fragment>
   );
 };
 
-export default BurgerBuilder;
+const mapStateToProps = (state) => {
+  return {
+    ingredients: state.ingredients,
+    price: state.price,
+    ingredientsAvailability: state.ingredientsAvailability,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addIngredient: (ing) => dispatch(addIngredient(ing)),
+    removeIngredient: (ing) => dispatch(removeIngredient(ing)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);
