@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Order from '../../components/Order/Order';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import axios from '../../axios';
+import withErrorHandler from '../../hoc/withErrorHandler';
 
 const Orders = (props) => {
   const [orders, setOrders] = useState(null);
@@ -16,7 +17,7 @@ const Orders = (props) => {
       .catch((err) => {
         console.log(err);
       });
-  });
+  }, []);
 
   let ingredientsDisplay = <Spinner />;
   if (orders) {
@@ -28,4 +29,4 @@ const Orders = (props) => {
   return ingredientsDisplay;
 };
 
-export default Orders;
+export default withErrorHandler(Orders, axios);
