@@ -8,6 +8,7 @@ const Input = (props) => {
   switch (props.inputType) {
     case 'input':
       const classes = props.invalid ? 'Input Invalid' : 'Input';
+
       const errorMessage = props.invalid ? <p>{props.errorMessage}</p> : null;
       inputElement = (
         <div className={classes}>
@@ -48,6 +49,8 @@ const Input = (props) => {
     default:
       inputElement = <input />;
   }
+
+  if (props.disabled) inputElement = null;
 
   return inputElement;
 };

@@ -10,6 +10,7 @@ import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
 import Orders from './containers/Orders/Orders';
+import Authenticate from './containers/Authenticate/Authenticate';
 import burgerReducer from './store/burgerReducer';
 import orderReducer from './store/orderReducer';
 
@@ -33,6 +34,9 @@ function App() {
           </Route>
           <Route path="/orders">
             <Orders />
+          </Route>
+          <Route path="/auth">
+            <Authenticate />
           </Route>
           <Route path="/">
             <BurgerBuilder />

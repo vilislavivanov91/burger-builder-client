@@ -10,7 +10,7 @@ import { initiateOrdersAsync } from '../../actions/orderActionCreator';
 const Orders = (props) => {
   useEffect(() => {
     props.initOrders();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let ingredientsDisplay = <Spinner />;
   if (props.orders) {
