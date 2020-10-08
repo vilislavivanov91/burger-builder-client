@@ -1,7 +1,8 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
+import thunk from 'redux-thunk';
 
 import './App.css';
 
@@ -10,8 +11,17 @@ import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
 import Orders from './containers/Orders/Orders';
 import burgerReducer from './store/burgerReducer';
+import orderReducer from './store/orderReducer';
 
-const store = createStore(burgerReducer);
+const rootReducer = combineReducers({
+  burger: burgerReducer,
+  order: orderReducer,
+});
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+  rootReducer,
+  composeEnhancers(applyMiddleware(thunk))
+);
 
 function App() {
   return (
@@ -24,7 +34,7 @@ function App() {
           <Route path="/orders">
             <Orders />
           </Route>
-          <Route path="/" render={BurgerBuilder}>
+          <Route path="/">
             <BurgerBuilder />
           </Route>
         </Switch>

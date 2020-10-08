@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import Button from '../../../components/UI/Button/Button';
 import Input from '../../../components/UI/Input/Input';
 import axios from '../../../axios';
+import { addOrderAsync } from '../../../actions/orderActionCreator';
+import withErrorHandler from '../../../hoc/withErrorHandler';
 import './ContactData.css';
 
 const ContactData = (props) => {
@@ -156,8 +159,10 @@ const ContactData = (props) => {
   const onOrderClicked = (e) => {
     e.preventDefault();
     const orderData = {
-      ...props.ingredients,
-      price: props.price,
+      ingredients: {
+        ...props.ingredients,
+      },
+      price: +props.price.toFixed(2),
       name: contactData.name.value,
       email: contactData.email.value,
       address: contactData.address.value,
@@ -165,12 +170,8 @@ const ContactData = (props) => {
       deliveryMethod: contactData.deliveryMethod.value,
     };
 
-    axios
-      .post('/order', orderData)
-      .then((response) => {
-        history.push('/orders');
-      })
-      .catch((err) => console.log(err));
+    props.handleOrder(orderData);
+    history.push('/orders');
   };
 
   return (
@@ -206,4 +207,13 @@ const ContactData = (props) => {
   );
 };
 
-export default ContactData;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleOrder: (orderData) => dispatch(addOrderAsync(orderData)),
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(withErrorHandler(ContactData, axios));

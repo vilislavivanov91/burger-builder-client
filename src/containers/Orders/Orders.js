@@ -1,32 +1,44 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 
 import Order from '../../components/Order/Order';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import axios from '../../axios';
 import withErrorHandler from '../../hoc/withErrorHandler';
+import { initiateOrdersAsync } from '../../actions/orderActionCreator';
 
 const Orders = (props) => {
-  const [orders, setOrders] = useState(null);
-
   useEffect(() => {
-    axios
-      .get('/order/all')
-      .then((response) => {
-        setOrders(response.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    props.initOrders();
   }, []);
 
   let ingredientsDisplay = <Spinner />;
-  if (orders) {
-    ingredientsDisplay = orders.map((order, i) => (
-      <Order key={i} ingredients={order.ingredients} price={order.price} />
+  if (props.orders) {
+    ingredientsDisplay = props.orders.map((order) => (
+      <Order
+        key={order._id}
+        ingredients={order.ingredients}
+        price={order.price}
+      />
     ));
   }
 
   return ingredientsDisplay;
 };
 
-export default withErrorHandler(Orders, axios);
+const mapStateToProps = (state) => {
+  return {
+    orders: state.order.orders,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    initOrders: () => dispatch(initiateOrdersAsync()),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(Orders, axios));

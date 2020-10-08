@@ -29,21 +29,7 @@ const BurgerBuilder = (props) => {
   };
 
   const continueToCheckout = () => {
-    const queryArr = [];
-    for (let ing in props.ingredients) {
-      const ingredientString = `${encodeURI(ing)}=${encodeURI(
-        props.ingredients[ing]
-      )}`;
-      queryArr.push(ingredientString);
-    }
-    queryArr.push('price=' + props.price);
-
-    const queryStr = queryArr.join('&');
-
-    history.push({
-      pathname: '/checkout',
-      search: '?' + queryStr,
-    });
+    history.push('/checkout');
   };
 
   return (
@@ -71,9 +57,9 @@ const BurgerBuilder = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    ingredients: state.ingredients,
-    price: state.price,
-    ingredientsAvailability: state.ingredientsAvailability,
+    ingredients: state.burger.ingredients,
+    price: state.burger.price,
+    ingredientsAvailability: state.burger.ingredientsAvailability,
   };
 };
 const mapDispatchToProps = (dispatch) => {
