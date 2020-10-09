@@ -13,10 +13,12 @@ import Orders from './containers/Orders/Orders';
 import Authenticate from './containers/Authenticate/Authenticate';
 import burgerReducer from './store/burgerReducer';
 import orderReducer from './store/orderReducer';
+import authReducer from './store/authReducer';
 
 const rootReducer = combineReducers({
   burger: burgerReducer,
   order: orderReducer,
+  auth: authReducer,
 });
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(

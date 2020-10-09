@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
+import { login, register } from '../../actions/authActionCreator';
 
 import './Authenticate.css';
 
@@ -63,7 +65,12 @@ const Register = (props) => {
   });
   const [formValidity, setFormValidity] = useState(false);
   const [passwordError, setPaswordError] = useState(false);
-  const [authState, setAuthState] = useState('Register');
+  const [isRegister, setIsRegister] = useState(true);
+
+  useEffect(() => {
+    // check form validity when switching from register to login form
+    setFormValidity(checkFormValidity(formControls));
+  }, [isRegister, formControls]);
 
   const inputChange = (e, inputName) => {
     const inputValue = e.target.value;
@@ -75,27 +82,16 @@ const Register = (props) => {
     const maxLength = formControls[inputName].validation.required.maxLength
       ? formControls[inputName].validation.required.maxLength
       : null;
-    // const equalToField = formControls[inputName].validation.required.equal
-    //   ? formControls[inputName].validation.required.equal
-    //   : null;
-    // let errorMessage;
     if (minLength) {
       isValid = isValid && inputValue.length >= minLength;
     }
     if (maxLength) {
       isValid = isValid && inputValue.length <= maxLength;
     }
-    // if (equalToField) {
-    //   isValid = isValid && inputValue === formControls[equalToField].value;
-    //   errorMessage = 'Password and confirm password do not match';
-    // }
     const updatedValidation = {
       ...formControls[inputName].validation,
       valid: isValid,
       touched: true,
-      // errorMessage: errorMessage
-      //   ? errorMessage
-      //   : formControls[inputName].validation.errorMessage,
     };
 
     const updatedFieldControl = {
@@ -108,16 +104,46 @@ const Register = (props) => {
       ...formControls,
       [inputName]: updatedFieldControl,
     };
-    setFormValidity(checkFormValidity(updatedFormControls));
+    // setFormValidity(checkFormValidity(updatedFormControls));
     setFormControls(updatedFormControls);
   };
 
   const checkFormValidity = (state) => {
     let isValid = true;
     for (const key in state) {
-      isValid = isValid && state[key].validation.valid;
+      if (key === 'confirmPassword' && !isRegister) {
+        isValid = isValid && true;
+      } else {
+        isValid = isValid && state[key].validation.valid;
+      }
     }
     return isValid;
+  };
+
+  const onAuthClicked = (e) => {
+    e.preventDefault();
+
+    if (isRegister) {
+      if (formControls.password.value !== formControls.confirmPassword.value) {
+        setPaswordError('Password and Confirm Password do not match');
+      } else {
+        setPaswordError(false);
+      }
+      props.register({
+        email: formControls.email.value,
+        password: formControls.password.value,
+        confirmPassword: formControls.confirmPassword.value,
+      });
+    } else {
+      props.login({
+        email: formControls.email.value,
+        password: formControls.password.value,
+      });
+    }
+  };
+  const switchAuthState = (e) => {
+    e.preventDefault();
+    setIsRegister(!isRegister);
   };
 
   const formControlsArray = [];
@@ -128,30 +154,11 @@ const Register = (props) => {
     });
   }
 
-  const onRegisterClicked = (e) => {
-    e.preventDefault();
-    console.log('CLICKED');
-    if (formControls.password.value !== formControls.confirmPassword.value) {
-      setPaswordError('Password and Confirm Password do not match');
-    } else {
-      setPaswordError(false);
-    }
-  };
-  const switchAuthState = (e) => {
-    e.preventDefault();
-
-    if (authState === 'Register') {
-      setAuthState('Login');
-    } else {
-      setAuthState('Register');
-    }
-  };
-
   return (
     <div className="container-fluid login-form">
       <div className="d-flex justify-content-center h-100">
         <form className="AuthForm">
-          <h3>{authState === 'Register' ? 'Register' : 'Login'}</h3>
+          <h3>{isRegister ? 'Register' : 'Login'}</h3>
           {formControlsArray.map((formControl) => {
             return (
               <Input
@@ -160,9 +167,7 @@ const Register = (props) => {
                 inputType={formControl.config.inputType}
                 value={formControl.config.value}
                 label={formControl.config.label}
-                disabled={
-                  authState === 'Login' && formControl.id === 'confirmPassword'
-                }
+                disabled={!isRegister && formControl.id === 'confirmPassword'}
                 changed={(e) => inputChange(e, formControl.id)}
                 invalid={
                   formControl.config.validation.touched &&
@@ -173,14 +178,14 @@ const Register = (props) => {
             );
           })}
           <Button
-            onClick={onRegisterClicked}
+            onClick={onAuthClicked}
             type={formValidity ? 'Success' : 'Danger'}
             disabled={!formValidity}
           >
-            {authState === 'Register' ? 'Register' : 'Login'}
+            {isRegister ? 'Register' : 'Login'}
           </Button>
           <Button onClick={switchAuthState} type="Success">
-            Switch to {authState === 'Register' ? 'Login' : 'Register'}
+            Switch to {isRegister ? 'Login' : 'Register'}
           </Button>
           {passwordError ? <p>{passwordError}</p> : null}
         </form>
@@ -189,4 +194,13 @@ const Register = (props) => {
   );
 };
 
-export default Register;
+const mapStateToProps = (state) => ({
+  isAuth: state.auth.isAuth,
+  email: state.auth.email,
+});
+const mapDispatchToprops = (dispatch) => ({
+  register: (data) => dispatch(register(data)),
+  login: (data) => dispatch(login(data)),
+});
+
+export default connect(mapStateToProps, mapDispatchToprops)(Register);
