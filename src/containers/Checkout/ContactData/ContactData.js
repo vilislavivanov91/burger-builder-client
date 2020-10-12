@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -104,6 +104,20 @@ const ContactData = (props) => {
 
   const [formValidity, setformValidity] = useState(false);
 
+  useEffect(() => {
+    setContactData({
+      ...contactData,
+      email: {
+        ...contactData.email,
+        value: props.email,
+        validation: {
+          ...contactData.email.validation,
+          valid: true,
+        },
+      },
+    });
+  }, []);
+
   const inputChange = (e, inputName) => {
     const inputValue = e.target.value;
 
@@ -207,6 +221,10 @@ const ContactData = (props) => {
   );
 };
 
+const mapStateToProps = (state) => ({
+  email: state.auth.email,
+});
+
 const mapDispatchToProps = (dispatch) => {
   return {
     handleOrder: (orderData) => dispatch(addOrderAsync(orderData)),
@@ -214,6 +232,6 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(withErrorHandler(ContactData, axios));

@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import NavigationItem from './NavigationItem/NavigationItem';
 import './NavigationItems.css';
@@ -7,10 +8,18 @@ const navigationItems = (props) => {
   return (
     <ul className="NavigationItems">
       <NavigationItem link="/">BurgerBuilder</NavigationItem>
-      <NavigationItem link="/orders">Orders</NavigationItem>
-      <NavigationItem link="/auth">Auth</NavigationItem>
+      {props.isAuth ? (
+        <NavigationItem link="/orders">Orders</NavigationItem>
+      ) : null}
+      {!props.isAuth ? (
+        <NavigationItem link="/auth">Auth</NavigationItem>
+      ) : null}
     </ul>
   );
 };
 
-export default navigationItems;
+const mapStateToProps = (state) => ({
+  isAuth: state.auth.isAuth,
+});
+
+export default connect(mapStateToProps)(navigationItems);

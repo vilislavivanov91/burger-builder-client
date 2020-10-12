@@ -21,17 +21,18 @@ export const clearLoading = () => {
   };
 };
 
-export const setAuth = (data) => {
+export const setAuth = (email) => {
   return {
     type: SET_AUTH,
     payload: {
-      isAuth: data.email ? true : false,
-      email: data.email,
+      isAuth: email ? true : false,
+      email: email,
     },
   };
 };
 
 export const logout = () => {
+  clearTokenFromLocalStorage();
   return {
     type: CLEAR_AUTH,
   };
@@ -54,7 +55,8 @@ export const register = ({ email, password, confirmPassword }) => {
       .then((response) => {
         const token = response.data.token.split(' ')[1];
         const decoded = jwtDecode(token);
-        dispatch(setAuth(decoded));
+        addTokenToLocalStorage(token);
+        dispatch(setAuth(decoded.email));
         dispatch(clearLoading());
       })
       .catch((err) => {
@@ -72,7 +74,8 @@ export const login = ({ email, password }) => {
       .then((response) => {
         const token = response.data.token.split(' ')[1];
         const decoded = jwtDecode(token);
-        dispatch(setAuth(decoded));
+        addTokenToLocalStorage(token);
+        dispatch(setAuth(decoded.email));
         dispatch(clearLoading());
       })
       .catch((err) => {
@@ -80,4 +83,18 @@ export const login = ({ email, password }) => {
         dispatch(setError(err));
       });
   };
+};
+
+const addTokenToLocalStorage = (token) => {
+  localStorage.setItem('tokenID', token);
+  const { iat, exp } = jwtDecode(token);
+  const tokenDuration = (exp - iat) * 1000;
+  setTimeout(() => {
+    clearTokenFromLocalStorage();
+  }, tokenDuration);
+  console.log(exp - iat);
+};
+
+const clearTokenFromLocalStorage = () => {
+  localStorage.removeItem('tokenID');
 };

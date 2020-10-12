@@ -1,8 +1,7 @@
-import React from 'react';
-import { Switch, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
-import thunk from 'redux-thunk';
+import React, { useEffect } from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import jwtDecode from 'jwt-decode';
 
 import './App.css';
 
@@ -11,42 +10,49 @@ import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
 import Orders from './containers/Orders/Orders';
 import Authenticate from './containers/Authenticate/Authenticate';
-import burgerReducer from './store/burgerReducer';
-import orderReducer from './store/orderReducer';
-import authReducer from './store/authReducer';
+import { setAuth, logout } from './actions/authActionCreator';
 
-const rootReducer = combineReducers({
-  burger: burgerReducer,
-  order: orderReducer,
-  auth: authReducer,
-});
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(thunk))
-);
-
-function App() {
+function App(props) {
+  const checkLocalStorageForToken = () => {
+    const tokenId = localStorage.getItem('tokenID');
+    if (tokenId) {
+      const { email, iat, exp } = jwtDecode(tokenId);
+      const tokenDuration = (exp - iat) * 1000;
+      props.setAuth(email);
+      setTimeout(() => {
+        props.logout();
+      }, tokenDuration);
+    }
+  };
+  checkLocalStorageForToken();
   return (
-    <Provider store={store}>
-      <Layout>
-        <Switch>
-          <Route path="/checkout">
-            <Checkout />
-          </Route>
-          <Route path="/orders">
-            <Orders />
-          </Route>
-          <Route path="/auth">
-            <Authenticate />
-          </Route>
-          <Route path="/">
-            <BurgerBuilder />
-          </Route>
-        </Switch>
-      </Layout>
-    </Provider>
+    <Layout>
+      <Switch>
+        <Route path="/checkout">
+          {props.isAuth ? <Checkout /> : <Redirect to="/auth" />}
+        </Route>
+        <Route path="/orders">
+          {props.isAuth ? <Orders /> : <Redirect to="/" />}
+        </Route>
+        (
+        <Route path="/auth">
+          {!props.isAuth ? <Authenticate /> : <Redirect to="/" />}
+        </Route>
+        <Route path="/">
+          <BurgerBuilder />
+        </Route>
+      </Switch>
+    </Layout>
   );
 }
+const mapStateToProps = (state) => ({
+  isAuth: state.auth.isAuth,
+});
+const mapDispatchToProps = (dispatch) => ({
+  setAuth: (email) => dispatch(setAuth(email)),
+  logout: () => {
+    dispatch(logout());
+  },
+});
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);
