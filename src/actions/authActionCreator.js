@@ -8,6 +8,7 @@ import {
   SET_LOADING,
 } from './authActionTypes';
 import axios from '../axios';
+
 let logoutSetTimeoutId;
 
 export const setLoading = () => {

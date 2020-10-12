@@ -1,6 +1,6 @@
 import axios from '../axios';
 
-import { ADD_ORDER, INIT_ORDERS } from './orderActionTypes';
+import { ADD_ORDER, INIT_ORDERS, CLEAR_ORDERS } from './orderActionTypes';
 
 export const addOrder = (orderData) => {
   return {
@@ -37,3 +37,7 @@ export const initiateOrdersAsync = () => {
       .catch((err) => console.log(err));
   };
 };
+
+export const clearOrders = () => ({
+  type: CLEAR_ORDERS,
+});

@@ -1,5 +1,6 @@
 import {
   ADD_INGREDIENT,
+  CLEAR_BURGER,
   REMOVE_INGREDIENT,
 } from '../actions/burgerActionTypes';
 
@@ -68,6 +69,25 @@ const burgerReducer = (state = initialState, action) => {
         ),
       };
       return updatedState;
+    }
+    case CLEAR_BURGER: {
+      console.log('CLEAR_BURGER');
+      return {
+        ingredients: {
+          meat: 0,
+          cheese: 0,
+          bacon: 0,
+          salad: 0,
+        },
+        ingredientsPrice: {
+          meat: 0.6,
+          cheese: 0.4,
+          salad: 0.3,
+          bacon: 0.5,
+        },
+        price: 0.7,
+        ingredientsAvailability: false,
+      };
     }
     default:
       return state;

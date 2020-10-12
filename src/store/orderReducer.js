@@ -1,4 +1,8 @@
-import { ADD_ORDER, INIT_ORDERS } from '../actions/orderActionTypes';
+import {
+  ADD_ORDER,
+  INIT_ORDERS,
+  CLEAR_ORDERS,
+} from '../actions/orderActionTypes';
 
 const initialState = {
   orders: [],
@@ -19,6 +23,10 @@ const orderReducer = (state = initialState, action) => {
       };
       return updatedState;
     }
+    case CLEAR_ORDERS:
+      return {
+        orders: [],
+      };
     default:
       return state;
   }
