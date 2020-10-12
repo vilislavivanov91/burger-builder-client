@@ -8,6 +8,7 @@ import {
   SET_LOADING,
 } from './authActionTypes';
 import axios from '../axios';
+let logoutSetTimeoutId;
 
 export const setLoading = () => {
   return {
@@ -32,6 +33,7 @@ export const setAuth = (email) => {
 };
 
 export const logout = () => {
+  clearTimeout(logoutSetTimeoutId);
   clearTokenFromLocalStorage();
   return {
     type: CLEAR_AUTH,
@@ -89,10 +91,9 @@ const addTokenToLocalStorage = (token) => {
   localStorage.setItem('tokenID', token);
   const { iat, exp } = jwtDecode(token);
   const tokenDuration = (exp - iat) * 1000;
-  setTimeout(() => {
+  logoutSetTimeoutId = setTimeout(() => {
     clearTokenFromLocalStorage();
   }, tokenDuration);
-  console.log(exp - iat);
 };
 
 const clearTokenFromLocalStorage = () => {

@@ -10,7 +10,6 @@ export const addOrder = (orderData) => {
 };
 
 export const initiateOrders = (orders) => {
-  console.log(orders);
   return {
     type: INIT_ORDERS,
     orders,

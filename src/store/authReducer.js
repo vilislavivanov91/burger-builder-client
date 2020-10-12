@@ -1,4 +1,3 @@
-import { act } from 'react-dom/test-utils';
 import { CLEAR_AUTH, SET_AUTH, SET_ERROR } from '../actions/authActionTypes';
 
 const initialState = {

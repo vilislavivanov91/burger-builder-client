@@ -69,6 +69,18 @@ const Register = (props) => {
 
   useEffect(() => {
     // check form validity when switching from register to login form
+    const checkFormValidity = (state) => {
+      let isValid = true;
+      for (const key in state) {
+        if (key === 'confirmPassword' && !isRegister) {
+          isValid = isValid && true;
+        } else {
+          isValid = isValid && state[key].validation.valid;
+        }
+      }
+      return isValid;
+    };
+
     setFormValidity(checkFormValidity(formControls));
   }, [isRegister, formControls]);
 
@@ -106,18 +118,6 @@ const Register = (props) => {
     };
     // setFormValidity(checkFormValidity(updatedFormControls));
     setFormControls(updatedFormControls);
-  };
-
-  const checkFormValidity = (state) => {
-    let isValid = true;
-    for (const key in state) {
-      if (key === 'confirmPassword' && !isRegister) {
-        isValid = isValid && true;
-      } else {
-        isValid = isValid && state[key].validation.valid;
-      }
-    }
-    return isValid;
   };
 
   const onAuthClicked = (e) => {

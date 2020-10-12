@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import jwtDecode from 'jwt-decode';
@@ -10,6 +10,7 @@ import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Checkout from './containers/Checkout/Checkout';
 import Orders from './containers/Orders/Orders';
 import Authenticate from './containers/Authenticate/Authenticate';
+import Logout from './containers/Logout/Logout';
 import { setAuth, logout } from './actions/authActionCreator';
 
 function App(props) {
@@ -37,6 +38,9 @@ function App(props) {
         (
         <Route path="/auth">
           {!props.isAuth ? <Authenticate /> : <Redirect to="/" />}
+        </Route>
+        <Route path="/logout">
+          {props.isAuth ? <Logout /> : <Redirect to="/" />}
         </Route>
         <Route path="/">
           <BurgerBuilder />

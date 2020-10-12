@@ -116,7 +116,7 @@ const ContactData = (props) => {
         },
       },
     });
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const inputChange = (e, inputName) => {
     const inputValue = e.target.value;
