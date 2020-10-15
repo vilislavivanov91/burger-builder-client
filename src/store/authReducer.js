@@ -4,6 +4,7 @@ const initialState = {
   isAuth: false,
   email: null,
   error: null,
+  isAdmin: false,
 };
 
 const authReducer = (state = initialState, action) => {
@@ -12,6 +13,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isAuth: action.payload.isAuth,
+        isAdmin: action.payload.isAdmin,
         email: action.payload.email,
         error: null,
       };
@@ -19,6 +21,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         isAuth: false,
+        isAdmin: false,
         email: null,
         error: null,
       };

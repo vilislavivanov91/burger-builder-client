@@ -17,9 +17,9 @@ function App(props) {
   const checkLocalStorageForToken = () => {
     const tokenId = localStorage.getItem('tokenID');
     if (tokenId) {
-      const { email, iat, exp } = jwtDecode(tokenId);
+      const { email, iat, exp, isAdmin } = jwtDecode(tokenId);
       const tokenDuration = (exp - iat) * 1000;
-      props.setAuth(email);
+      props.setAuth(email, isAdmin);
       setTimeout(() => {
         props.logout();
       }, tokenDuration);
@@ -53,7 +53,7 @@ const mapStateToProps = (state) => ({
   isAuth: state.auth.isAuth,
 });
 const mapDispatchToProps = (dispatch) => ({
-  setAuth: (email) => dispatch(setAuth(email)),
+  setAuth: (email, isAdmin) => dispatch(setAuth(email, isAdmin)),
   logout: () => {
     dispatch(logout());
   },

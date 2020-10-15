@@ -3,7 +3,14 @@ import { connect } from 'react-redux';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
-import { login, register } from '../../actions/authActionCreator';
+import {
+  login,
+  register,
+  loginAdmin,
+  registerAdmin,
+} from '../../actions/authActionCreator';
+import withErrorHandler from '../../hoc/withErrorHandler';
+import axios from '../../axios';
 
 import './Authenticate.css';
 
@@ -60,6 +67,22 @@ const Register = (props) => {
         valid: false,
         touched: false,
         errorMessage: 'Password must be atleast 5 symbols',
+      },
+    },
+    userType: {
+      inputType: 'select',
+      value: 'client',
+      label: 'User Type',
+      config: {
+        options: [
+          { value: 'client', displayValue: 'Client' },
+          { value: 'admin', displayValue: 'Admin' },
+        ],
+      },
+      validation: {
+        required: {},
+        valid: true,
+        touched: true,
       },
     },
   });
@@ -123,22 +146,40 @@ const Register = (props) => {
   const onAuthClicked = (e) => {
     e.preventDefault();
 
+    const isAdmin = formControls.userType.value === 'admin';
+    console.log(isAdmin);
+
     if (isRegister) {
       if (formControls.password.value !== formControls.confirmPassword.value) {
         setPaswordError('Password and Confirm Password do not match');
       } else {
         setPaswordError(false);
       }
-      props.register({
-        email: formControls.email.value,
-        password: formControls.password.value,
-        confirmPassword: formControls.confirmPassword.value,
-      });
+      if (isAdmin) {
+        props.registerAdmin({
+          email: formControls.email.value,
+          password: formControls.password.value,
+          confirmPassword: formControls.confirmPassword.value,
+        });
+      } else {
+        props.register({
+          email: formControls.email.value,
+          password: formControls.password.value,
+          confirmPassword: formControls.confirmPassword.value,
+        });
+      }
     } else {
-      props.login({
-        email: formControls.email.value,
-        password: formControls.password.value,
-      });
+      if (isAdmin) {
+        props.loginAdmin({
+          email: formControls.email.value,
+          password: formControls.password.value,
+        });
+      } else {
+        props.login({
+          email: formControls.email.value,
+          password: formControls.password.value,
+        });
+      }
     }
   };
   const switchAuthState = (e) => {
@@ -200,7 +241,12 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToprops = (dispatch) => ({
   register: (data) => dispatch(register(data)),
+  registerAdmin: (data) => dispatch(registerAdmin(data)),
   login: (data) => dispatch(login(data)),
+  loginAdmin: (data) => dispatch(loginAdmin(data)),
 });
 
-export default connect(mapStateToProps, mapDispatchToprops)(Register);
+export default connect(
+  mapStateToProps,
+  mapDispatchToprops
+)(withErrorHandler(Register, axios));
