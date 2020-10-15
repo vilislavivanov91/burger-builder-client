@@ -30,7 +30,7 @@ export const addOrderAsync = (orderData) => {
 export const initiateOrdersAsync = () => {
   return (dispatch) => {
     axios
-      .get('/order/all')
+      .get('/order/user/all')
       .then((response) => {
         return dispatch(initiateOrders(response.data));
       })

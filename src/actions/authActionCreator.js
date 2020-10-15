@@ -74,7 +74,7 @@ export const registerAdmin = ({ email, password, confirmPassword }) => {
   return (dispatch) => {
     dispatch(setLoading());
     axios
-      .post('/auth/user/register', { email, password, confirmPassword })
+      .post('/auth/admin/register', { email, password, confirmPassword })
       .then((response) => {
         const token = response.data.token.split(' ')[1];
         const decoded = jwtDecode(token);
