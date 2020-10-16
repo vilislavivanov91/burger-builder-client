@@ -11,6 +11,7 @@ import Checkout from './containers/Checkout/Checkout';
 import Orders from './containers/Orders/Orders';
 import Authenticate from './containers/Authenticate/Authenticate';
 import Logout from './containers/Logout/Logout';
+import AdminDashboard from './containers/AdminDashboard/AdminDashboard';
 import { setAuth, logout } from './actions/authActionCreator';
 
 function App(props) {
@@ -42,6 +43,9 @@ function App(props) {
         <Route path="/logout">
           {props.isAuth ? <Logout /> : <Redirect to="/" />}
         </Route>
+        <Route path="/admin-dashboard">
+          {props.isAdmin ? <AdminDashboard /> : <Redirect to="/" />}
+        </Route>
         <Route path="/">
           <BurgerBuilder />
         </Route>
@@ -51,6 +55,7 @@ function App(props) {
 }
 const mapStateToProps = (state) => ({
   isAuth: state.auth.isAuth,
+  isAdmin: state.auth.isAdmin,
 });
 const mapDispatchToProps = (dispatch) => ({
   setAuth: (email, isAdmin) => dispatch(setAuth(email, isAdmin)),

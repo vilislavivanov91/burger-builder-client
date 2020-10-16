@@ -38,6 +38,17 @@ export const initiateOrdersAsync = () => {
   };
 };
 
+export const initiateAdminOrdersAsync = () => {
+  return (dispatch) => {
+    axios
+      .get('/order/all')
+      .then((response) => {
+        return dispatch(initiateOrders(response.data));
+      })
+      .catch((err) => console.log(err));
+  };
+};
+
 export const clearOrders = () => ({
   type: CLEAR_ORDERS,
 });
