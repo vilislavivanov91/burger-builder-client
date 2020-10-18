@@ -33,7 +33,10 @@ export const addOrderAsync = (orderData) => {
         dispatch(addOrder(response.data));
         dispatch(finishLoading());
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        dispatch(setError(err));
+        dispatch(finishLoading());
+      });
   };
 };
 
@@ -46,7 +49,10 @@ export const initiateOrdersAsync = () => {
         dispatch(setOrders(response.data));
         dispatch(finishLoading());
       })
-      .catch((err) => dispatch(setError(err)));
+      .catch((err) => {
+        dispatch(setError(err));
+        dispatch(finishLoading());
+      });
   };
 };
 
@@ -59,7 +65,10 @@ export const initiateAdminOrdersAsync = () => {
         dispatch(setOrders(response.data));
         dispatch(finishLoading());
       })
-      .catch((err) => dispatch(setError(err)));
+      .catch((err) => {
+        dispatch(setError(err));
+        dispatch(finishLoading());
+      });
   };
 };
 
@@ -75,9 +84,15 @@ export const changeOrderStageAsync = (orderId, stage) => {
             dispatch(setOrders(response.data));
             dispatch(finishLoading());
           })
-          .catch((err) => dispatch(setError(err)));
+          .catch((err) => {
+            dispatch(setError(err));
+            dispatch(finishLoading());
+          });
       })
-      .catch((err) => dispatch(setError(err)));
+      .catch((err) => {
+        dispatch(setError(err));
+        dispatch(finishLoading());
+      });
   };
 };
 
@@ -91,7 +106,10 @@ export const deleteOrderAsync = (orderId, history) => {
         dispatch(finishLoading());
         history.push('/admin-dashboard');
       })
-      .catch((err) => dispatch(setError(err)));
+      .catch((err) => {
+        dispatch(setError(err));
+        dispatch(finishLoading());
+      });
   };
 };
 

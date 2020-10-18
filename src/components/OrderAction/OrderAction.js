@@ -38,7 +38,6 @@ const orderAction = (props) => {
         <button
           className="btn btn-danger btn-sm"
           onClick={props.onDeleteButtonClicked}
-          disabled={props.sendButtonDisabled}
         >
           Delete
         </button>
