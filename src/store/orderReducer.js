@@ -1,31 +1,60 @@
 import {
   ADD_ORDER,
-  INIT_ORDERS,
+  SET_OREDERS,
   CLEAR_ORDERS,
+  SET_ERROR,
+  START_LOADING,
+  FINISH_LOADING,
+  DELETE_ORDER,
 } from '../actions/orderActionTypes';
 
 const initialState = {
   orders: [],
+  error: null,
+  loading: false,
 };
 
 const orderReducer = (state = initialState, action) => {
   switch (action.type) {
-    case INIT_ORDERS: {
-      const updatedState = {
+    case SET_OREDERS: {
+      return {
         ...state,
+        error: null,
         orders: action.orders,
       };
-      return updatedState;
     }
     case ADD_ORDER: {
-      const updatedState = {
+      return {
+        ...state,
+        error: null,
         orders: state.orders.concat(action.order),
       };
-      return updatedState;
     }
     case CLEAR_ORDERS:
       return {
+        ...state,
+        error: null,
         orders: [],
+      };
+    case DELETE_ORDER:
+      return {
+        ...state,
+        orders: state.orders.filter((order) => order._id !== action.payload),
+      };
+    case START_LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+    case FINISH_LOADING:
+      return {
+        ...state,
+        loading: false,
+      };
+    case SET_ERROR:
+      return {
+        ...state,
+        error: action.payload,
       };
     default:
       return state;

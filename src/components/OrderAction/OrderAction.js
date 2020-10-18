@@ -1,6 +1,4 @@
-import React, { Fragment } from 'react';
-
-import './OrderAction.css';
+import React from 'react';
 
 const orderAction = (props) => {
   const ingredients = Object.keys(props.ingredients).map((ingKey) => (
@@ -39,7 +37,7 @@ const orderAction = (props) => {
         </button>
         <button
           className="btn btn-danger btn-sm"
-          onClick={props.onSendButtonClicked}
+          onClick={props.onDeleteButtonClicked}
           disabled={props.sendButtonDisabled}
         >
           Delete
